@@ -56,10 +56,10 @@ function confirmation()
 function message($data)
 {
     $user = getUser($data);
-    $body = $data->object->body;
+    $body = $data->object->text;
     $message = getMessage($body);
 
-    request($user, $message);
+    request($user, $message, $data);
 }
 
 /**
@@ -85,7 +85,7 @@ function joinGroup($data)
         8 – Замена билета
         9 – Проблемы технического характера, прочие вопросы!";
 
-    request($user, $message);
+    request($user, $message, $data);
 }
 
 /**
@@ -110,7 +110,7 @@ function leaveGroup($data)
         8 – Замена билета
         9 – Проблемы технического характера, прочие вопросы!";
 
-    request($user, $message);
+    request($user, $message, $data);
 }
 
 /**
@@ -139,20 +139,22 @@ function getUser($data)
  *
  * @param array $user
  * @param string $message
+ * @param object $data
  *
  * @return string
  */
-function request($user, $message)
+function request($user, $message, $data)
 {
     $params = array(
         'message' => "{$message}",
         'user_id' => $user['id'],
         'access_token' => TOKEN,
-        'v' => API_VERSION
+        'v' => API_VERSION,
+        'peer_id' => $data->object->peer_id
     );
 
     $params = http_build_query($params);
-    file_get_contents(API_URL . 'messages.send?' . $params);
+    $test = file_get_contents(API_URL . 'messages.send?' . $params);
     echo('ok');
 }
 
